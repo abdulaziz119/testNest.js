@@ -4,7 +4,7 @@ import { SingleResponse } from '../../utils/dto/dto';
 import { UsersEntity } from '../../entity/users.entity';
 import { OtpService } from './otp.service';
 
-@Controller('/frontend/otp')
+@Controller('/otp')
 export class OtpController {
   constructor(private readonly otpService: OtpService) {}
 

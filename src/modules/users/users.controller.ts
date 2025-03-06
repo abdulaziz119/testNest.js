@@ -4,7 +4,7 @@ import { UsersEntity } from '../../entity/users.entity';
 import { UsersService } from './users.service';
 import { AuthLoginDto, AuthRegisterDto } from './dto/users.dto';
 
-@Controller('/frontend/users')
+@Controller('/users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
