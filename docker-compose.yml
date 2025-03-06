@@ -11,6 +11,8 @@ services:
     working_dir: /src
     volumes:
       - .:/src
+      - /src/dist
+
 
   postgres:
     image: postgres
