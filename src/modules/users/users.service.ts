@@ -7,13 +7,12 @@ import {
 } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { MODELS } from '../../constants';
-import { AuthorizationService } from '../../services/authorization.service';
 import {
   PaginationParams,
   ParamIdDto,
   SingleResponse,
 } from '../../utils/dto/dto';
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 import { DeleteResult } from 'typeorm';
 import { UsersEntity } from '../../entity/users.entity';
 import { CreateUserDto, UpdateUserDto, UserResponseDto } from './dto/users.dto';

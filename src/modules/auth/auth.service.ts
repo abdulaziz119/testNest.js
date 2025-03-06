@@ -6,7 +6,7 @@ import { MODELS } from '../../constants';
 import { OtpEntity } from '../../entity/otp.entity';
 import { AuthorizationService } from '../../services/authorization.service';
 import { MailService } from '../../services/mail.service';
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 import { AuthLoginDto, AuthRegisterDto, AuthVerifyDto } from './auth.dto';
 
 @Injectable()
