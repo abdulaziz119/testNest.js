@@ -23,7 +23,7 @@ export class OtpService {
     payload: AuthVerifyDto,
   ): Promise<SingleResponse<{ user: UsersEntity; token: string }>> {
     try {
-      const otp: OtpEntity = await this.otpRepo.findOne({
+      const otp = await this.otpRepo.findOne({
         where: {
           email: payload.email,
         },
@@ -38,12 +38,14 @@ export class OtpService {
       }
       otp.retryCount += 1;
       await this.otpRepo.update({ email: payload.email }, otp);
-      const user: UsersEntity = await this.usersRepo.findOne({
+      const user = await this.usersRepo.findOne({
         where: {
           email: payload.email,
         },
       });
-
+      if (!user) {
+        throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+      }
       const token: string = await this.authorizationService.sign(
         user.id,
         user.email,
@@ -62,7 +64,7 @@ export class OtpService {
     payload: AuthOtpDto,
   ): Promise<SingleResponse<{ otp: string }>> {
     try {
-      const otp: OtpEntity = await this.otpRepo.findOne({
+      const otp = await this.otpRepo.findOne({
         where: { email: payload.email },
       });
 

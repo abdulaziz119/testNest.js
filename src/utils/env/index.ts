@@ -1,13 +1,13 @@
 import * as dotenv from 'dotenv';
 
 dotenv.config();
-const DB_PORT = +process.env.DB_PORT || 5432;
+const DB_PORT = +process.env.DB_PORT || 5433;
 const DB_HOST = process.env.DB_HOST || '';
 const DB_USER = process.env.DB_USERNAME || '';
 const DB_DB = process.env.DB_DATABASE || '';
 const DB_PASS = process.env.DB_PASSWORD || '';
 const PORT = process.env.PORT || 3000;
-const DB_SCHEMA = process.env.DB_SCHEMA || 'test';
+const DB_SCHEMA = process.env.DB_SCHEMA || '';
 const JWT_SECRET = process.env.JWT_SECRET || '';
 const SMTP_USER = process.env.SMTP_USER || '';
 const SMTP_PASS = process.env.SMTP_PASS || '';

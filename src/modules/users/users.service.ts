@@ -36,7 +36,7 @@ export class UsersService {
 
       await this.usersRepo.save(UsersModule);
 
-      const otp: OtpEntity = await this.otpRepo.findOne({
+      const otp = await this.otpRepo.findOne({
         where: { email: payload.email },
       });
 
@@ -76,7 +76,7 @@ export class UsersService {
         payload.password = await bcrypt.hash(payload.password, 10);
       }
 
-      const otp: OtpEntity = await this.otpRepo.findOne({
+      const otp = await this.otpRepo.findOne({
         where: {
           email: payload.email,
         },
@@ -90,7 +90,7 @@ export class UsersService {
         throw new HttpException('OTP expired', HttpStatus.UNAUTHORIZED);
       }
 
-      const user: UsersEntity = await this.usersRepo.findOne({
+      const user = await this.usersRepo.findOne({
         where: { email: payload.email },
       });
 
@@ -124,7 +124,7 @@ export class UsersService {
     payload: AuthLoginDto,
   ): Promise<SingleResponse<{ user: UsersEntity; token: string }>> {
     try {
-      const user: UsersEntity = await this.usersRepo.findOne({
+      const user = await this.usersRepo.findOne({
         where: { email: payload.email },
         select: [
           'id',
@@ -163,7 +163,7 @@ export class UsersService {
     payload: AuthLoginDto,
   ): Promise<SingleResponse<{ user: UsersEntity; token: string }>> {
     try {
-      const user: UsersEntity = await this.usersRepo.findOne({
+      const user = await this.usersRepo.findOne({
         where: { email: payload.email },
         select: [
           'id',

@@ -58,7 +58,7 @@ export class AuthorizationService {
         );
       }
 
-      const user: UsersEntity = await this.usersRepo.findOne({
+      const user = await this.usersRepo.findOne({
         where: {
           id: decoded.id,
           email: decoded.email,
