@@ -1,13 +1,15 @@
-import { Module } from '@nestjs/common';
+import { UsersModule } from '../users/users.module';
 import { DatabaseModule } from '../../database/database.module';
 import { OrderController } from './order.controller';
 import { orderProviders } from './order.providers';
+import { productProviders } from '../product/product.providers';
 import { OrdersService } from './order.service';
 import { basketProviders } from '../basket/basket.providers';
-import { productProviders } from '../product/product.providers';
+import { Module } from '@nestjs/common';
+import { usersProviders } from '../users/users.providers';
 
 @Module({
-  imports: [DatabaseModule],
+  imports: [DatabaseModule, UsersModule],
   controllers: [OrderController],
   providers: [
     ...orderProviders,
@@ -15,5 +17,6 @@ import { productProviders } from '../product/product.providers';
     ...productProviders,
     OrdersService,
   ],
+  exports: [OrdersService],
 })
 export class OrderModule {}

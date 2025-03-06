@@ -20,27 +20,38 @@ export class BasketsService {
     private basketRepository: Repository<BasketEntity>,
     @Inject(MODELS.PRODUCT)
     private productRepository: Repository<ProductEntity>,
+    @Inject(MODELS.USERS)
+    private usersRepository: Repository<UsersEntity>,
   ) {}
 
   async addToBasket(
     addToBasketDto: AddToBasketDto,
   ): Promise<SingleResponse<BasketEntity>> {
-    const { productId, quantity } = addToBasketDto;
+    const { userId, productId, quantity } = addToBasketDto;
     const product = await this.productRepository.findOne({
       where: { id: productId },
     });
     if (!product) throw new NotFoundException('Product not found');
 
+    const user = await this.usersRepository.findOne({
+      where: { id: userId },
+    });
+    if (!user) throw new NotFoundException('User not found');
+
     let basket = await this.basketRepository.findOne({
       where: {
-        user: { id: addToBasketDto.user_id },
+        user: { id: user.id },
         product: { id: productId },
       },
     });
     if (basket) {
       basket.quantity += quantity;
     } else {
-      basket = await this.basketRepository.create({ product, quantity });
+      basket = this.basketRepository.create({
+        user,
+        product,
+        quantity,
+      });
     }
     const newBasket = await this.basketRepository.save(basket);
     return { result: newBasket };

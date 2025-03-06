@@ -9,6 +9,7 @@ import { CreateCategoryDto, UpdateCategoryDto } from './dto/categories.dto';
 import { CategoryEntity } from '../../entity/category.entity';
 import { CategoryService } from './category.service';
 import { PaginationResponse } from '../../utils/pagination.response';
+import { Auth } from '../auth/decorators/auth.decorator';
 
 @Controller('/category')
 export class CategoryController {
@@ -16,6 +17,7 @@ export class CategoryController {
 
   @Post('/create')
   @HttpCode(201)
+  @Auth()
   async create(
     @Body() body: CreateCategoryDto,
   ): Promise<SingleResponse<CategoryEntity>> {
@@ -24,6 +26,7 @@ export class CategoryController {
 
   @Post('/findAll')
   @HttpCode(200)
+  @Auth()
   async findAll(
     @Body() payload: PaginationParams,
   ): Promise<PaginationResponse<CategoryEntity[]>> {
@@ -32,6 +35,7 @@ export class CategoryController {
 
   @Post('/findOne')
   @HttpCode(200)
+  @Auth()
   async findOne(
     @Body() body: ParamIdDto,
   ): Promise<SingleResponse<CategoryEntity>> {
@@ -40,6 +44,7 @@ export class CategoryController {
 
   @Post('/update')
   @HttpCode(202)
+  @Auth()
   async update(
     @Body() body: UpdateCategoryDto,
   ): Promise<SingleResponse<CategoryEntity>> {
@@ -48,6 +53,7 @@ export class CategoryController {
 
   @Post('/remove')
   @HttpCode(204)
+  @Auth()
   async delete(@Body() body: ParamIdDto): Promise<DeleteResult> {
     return this.categoryService.remove(body);
   }

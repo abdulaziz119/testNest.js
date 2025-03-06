@@ -1,8 +1,7 @@
 import { IsNumber, Min, IsDefined } from 'class-validator';
 
 export class AddToBasketDto {
-  @IsDefined()
-  user_id: number;
+  userId: number;
 
   @IsNumber()
   productId: number;

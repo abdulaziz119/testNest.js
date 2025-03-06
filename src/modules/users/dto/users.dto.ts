@@ -1,46 +1,82 @@
-import { IsEmail, IsEnum, IsNotEmpty, IsString, Length } from 'class-validator';
-import { Optional } from '@nestjs/common';
+import {
+  IsEmail,
+  IsString,
+  MinLength,
+  IsEnum,
+  IsOptional,
+  IsDateString,
+  IsDefined,
+} from 'class-validator';
 import { Gender, UserLanguage } from '../../../entity/users.entity';
-
-export class AuthRegisterDto {
+export class CreateUserDto {
   @IsString()
-  @IsNotEmpty()
-  @Length(2, 50)
   firstName: string;
 
   @IsString()
-  @IsNotEmpty()
-  @Length(2, 50)
   lastName: string;
 
-  @IsString()
-  @Optional()
-  @IsEnum(UserLanguage, { message: 'Language must be either uz, ru or en' })
-  language: UserLanguage;
-
-  @IsEnum(Gender, { message: 'Gender must be either male or female' })
+  @IsEnum(Gender)
   gender: Gender;
 
-  @IsNotEmpty()
-  birthday: Date;
+  @IsDateString()
+  birthday: string;
+
+  @IsEnum(UserLanguage)
+  @IsOptional()
+  language?: UserLanguage = UserLanguage.UZ;
 
   @IsEmail()
-  @IsNotEmpty()
   email: string;
 
   @IsString()
-  @IsNotEmpty()
-  @Length(8, 255)
+  @MinLength(6)
   password: string;
 }
 
-export class AuthLoginDto {
-  @IsEmail()
-  @IsNotEmpty()
-  email: string;
+export class UpdateUserDto {
+  @IsDefined()
+  id: number;
 
   @IsString()
-  @IsNotEmpty()
-  @Length(8, 255)
+  @IsOptional()
+  firstName?: string;
+
+  @IsString()
+  @IsOptional()
+  lastName?: string;
+
+  @IsEnum(Gender)
+  @IsOptional()
+  gender?: Gender;
+
+  @IsDateString()
+  @IsOptional()
+  birthday?: string;
+
+  @IsEnum(UserLanguage)
+  @IsOptional()
+  language?: UserLanguage;
+
+  @IsString()
+  @MinLength(6)
+  @IsOptional()
+  password?: string;
+}
+
+export class UserResponseDto {
+  id: number;
+
+  firstName: string;
+
+  lastName: string;
+
+  gender: Gender;
+
+  birthday: string;
+
   password: string;
+
+  language: UserLanguage;
+
+  email: string;
 }

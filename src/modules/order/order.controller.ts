@@ -8,6 +8,9 @@ import { PaginationResponse } from '../../utils/pagination.response';
 import { OrdersService } from './order.service';
 import { UsersEntity } from '../../entity/users.entity';
 import { OrderEntity } from '../../entity/order.entity';
+import { Auth } from '../auth/decorators/auth.decorator';
+import { User } from '../auth/decorators/user.decorator';
+import { CreateOrderDto, OrderResponseDto } from './dto/order.dto';
 
 @Controller('/order')
 export class OrderController {
@@ -15,12 +18,18 @@ export class OrderController {
 
   @Post('/create')
   @HttpCode(201)
-  async create(@Body() body: any): Promise<SingleResponse<OrderEntity>> {
-    return await this.orderService.create(body);
+  @Auth()
+  async create(
+    @Body() payload: CreateOrderDto,
+    @User() user,
+  ): Promise<SingleResponse<OrderResponseDto>> {
+    payload.userId = user.id;
+    return await this.orderService.create(payload);
   }
 
   @Post('/findAll')
   @HttpCode(200)
+  @Auth()
   async findAll(
     @Body() payload: PaginationParams,
   ): Promise<PaginationResponse<OrderEntity[]>> {
@@ -29,6 +38,7 @@ export class OrderController {
 
   @Post('/findOne')
   @HttpCode(200)
+  @Auth()
   async findOne(
     @Body() body: ParamIdDto,
   ): Promise<SingleResponse<OrderEntity>> {
@@ -37,6 +47,7 @@ export class OrderController {
 
   @Post('/findUserOrders')
   @HttpCode(200)
+  @Auth()
   async findUserOrders(
     @Body() body: UsersEntity,
   ): Promise<SingleResponse<OrderEntity[]>> {

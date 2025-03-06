@@ -1,34 +1,61 @@
 import { Body, Controller, HttpCode, Post } from '@nestjs/common';
-import { AuthSignInDto, SingleResponse } from '../../utils/dto/dto';
-import { UsersEntity } from '../../entity/users.entity';
+import {
+  PaginationParams,
+  ParamIdDto,
+  SingleResponse,
+} from '../../utils/dto/dto';
+import { DeleteResult } from 'typeorm';
 import { UsersService } from './users.service';
-import { AuthLoginDto, AuthRegisterDto } from './dto/users.dto';
+import { Auth } from '../auth/decorators/auth.decorator';
+import { UpdateCategoryDto } from '../category/dto/categories.dto';
+import { PaginationResponse } from '../../utils/pagination.response';
+import { CreateUserDto } from './dto/users.dto';
+import { UsersEntity } from '../../entity/users.entity';
 
 @Controller('/users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Post('/register')
+  @Post('/create')
   @HttpCode(201)
-  async register(
-    @Body() body: AuthRegisterDto,
-  ): Promise<SingleResponse<{ user: string }>> {
-    return await this.usersService.register(body);
+  @Auth()
+  async create(
+    @Body() body: CreateUserDto,
+  ): Promise<SingleResponse<UsersEntity>> {
+    return await this.usersService.create(body);
   }
 
-  @Post('/login')
+  @Post('/findAll')
   @HttpCode(200)
-  async login(
-    @Body() body: AuthLoginDto,
-  ): Promise<SingleResponse<{ user: UsersEntity; token: string }>> {
-    return await this.usersService.loginHashed(body);
+  @Auth()
+  async findAll(
+    @Body() payload: PaginationParams,
+  ): Promise<PaginationResponse<UsersEntity[]>> {
+    return await this.usersService.findAll(payload);
   }
 
-  @Post('/forgot-password')
+  @Post('/findOne')
   @HttpCode(200)
-  async signIn(
-    @Body() body: AuthSignInDto,
-  ): Promise<SingleResponse<{ user: UsersEntity; token: string }>> {
-    return await this.usersService.signIn(body);
+  @Auth()
+  async findOne(
+    @Body() body: ParamIdDto,
+  ): Promise<SingleResponse<UsersEntity>> {
+    return await this.usersService.findOne(body);
+  }
+
+  @Post('/update')
+  @HttpCode(202)
+  @Auth()
+  async update(
+    @Body() body: UpdateCategoryDto,
+  ): Promise<SingleResponse<UsersEntity>> {
+    return this.usersService.update(body);
+  }
+
+  @Post('/remove')
+  @HttpCode(204)
+  @Auth()
+  async delete(@Body() body: ParamIdDto): Promise<DeleteResult> {
+    return this.usersService.remove(body);
   }
 }

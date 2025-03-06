@@ -10,21 +10,27 @@ import {
   UpdateBasketDto,
 } from './dto/basket.dto';
 import { PaginationResponse } from '../../utils/pagination.response';
+import { Auth } from '../auth/decorators/auth.decorator';
+import { User } from '../auth/decorators/user.decorator';
 
-@Controller('/frontend/users')
+@Controller('/basket')
 export class BasketController {
   constructor(private readonly basketService: BasketsService) {}
 
   @Post('/create')
   @HttpCode(201)
+  @Auth()
   async create(
-    @Body() body: AddToBasketDto,
+    @Body() payload: AddToBasketDto,
+    @User() user,
   ): Promise<SingleResponse<BasketEntity>> {
-    return await this.basketService.addToBasket(body);
+    payload.userId = user.id;
+    return await this.basketService.addToBasket(payload);
   }
 
   @Post('/findAll')
   @HttpCode(200)
+  @Auth()
   async findAll(
     @Body() payload: PaginationBasketParams,
   ): Promise<PaginationResponse<BasketEntity[]>> {
@@ -33,6 +39,7 @@ export class BasketController {
 
   @Post('/update')
   @HttpCode(202)
+  @Auth()
   async update(
     @Body() body: UpdateBasketDto,
   ): Promise<SingleResponse<BasketEntity>> {
@@ -41,6 +48,7 @@ export class BasketController {
 
   @Post('/remove')
   @HttpCode(204)
+  @Auth()
   async delete(@Body() body: ParamIdDto): Promise<DeleteResult> {
     return this.basketService.remove(body);
   }

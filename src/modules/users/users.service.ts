@@ -1,65 +1,45 @@
-import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  NotFoundException,
+  Inject,
+  Injectable,
+} from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { MODELS } from '../../constants';
 import { AuthorizationService } from '../../services/authorization.service';
-import { AuthSignInDto, SingleResponse } from '../../utils/dto/dto';
+import {
+  PaginationParams,
+  ParamIdDto,
+  SingleResponse,
+} from '../../utils/dto/dto';
 import * as bcrypt from 'bcrypt';
+import { DeleteResult } from 'typeorm';
 import { UsersEntity } from '../../entity/users.entity';
-import { OtpEntity } from '../../entity/otp.entity';
-import { MailService } from '../../services/mail.service';
-import { AuthLoginDto, AuthRegisterDto } from './dto/users.dto';
+import { CreateUserDto, UpdateUserDto, UserResponseDto } from './dto/users.dto';
+import { PaginationResponse } from '../../utils/pagination.response';
+import { getPaginationResponse } from '../../utils/pagination.builder';
 
 @Injectable()
 export class UsersService {
   constructor(
     @Inject(MODELS.USERS)
     private readonly usersRepo: Repository<UsersEntity>,
-    @Inject(MODELS.OTP)
-    private readonly otpRepo: Repository<OtpEntity>,
-    private readonly authorizationService: AuthorizationService,
-    private readonly mailService: MailService,
   ) {}
 
-  async register(
-    payload: AuthRegisterDto,
-  ): Promise<SingleResponse<{ user: string }>> {
+  async create(dto: CreateUserDto): Promise<SingleResponse<UsersEntity>> {
+    const hashedPassword: string = await bcrypt.hash(dto.password, 10);
+    const UserModule = new UsersEntity();
+    (UserModule.firstName = dto.firstName),
+      (UserModule.lastName = dto.lastName),
+      (UserModule.gender = dto.gender),
+      (UserModule.password = dto.password),
+      (UserModule.birthday = new Date(dto.birthday)),
+      (UserModule.language = dto.language) || 'uz',
+      (UserModule.email = dto.email),
+      (UserModule.password = hashedPassword);
     try {
-      const passwordHashPromise = bcrypt.hash(payload.password, 10);
-      const UsersModule = new UsersEntity();
-      UsersModule.firstName = payload.firstName;
-      UsersModule.language = payload.language;
-      UsersModule.lastName = payload.lastName;
-      UsersModule.gender = payload.gender;
-      UsersModule.birthday = payload.birthday;
-      UsersModule.email = payload.email;
-      UsersModule.password = await passwordHashPromise;
-
-      await this.usersRepo.save(UsersModule);
-
-      const otp = await this.otpRepo.findOne({
-        where: { email: payload.email },
-      });
-
-      const newOtp = {
-        email: payload.email,
-        otp: Math.floor(100000 + Math.random() * 900000).toString(),
-        otpSendAt: new Date(),
-        retryCount: 1,
-      };
-
-      if (!otp) {
-        await this.otpRepo.save(newOtp);
-      } else {
-        newOtp.retryCount += otp.retryCount;
-        await this.otpRepo.update({ email: payload.email }, newOtp);
-      }
-      this.mailService
-        .sendOtpEmail(payload.email, newOtp.otp)
-        .catch((err: any): void =>
-          console.error('Failed to send OTP email:', err),
-        );
-
-      return { result: { user: '60 seconds' } };
+      return { result: await this.usersRepo.save(UserModule) };
     } catch (error: any) {
       throw new HttpException(
         `Failed to create a user. ${error.message || 'Unknown error'}`,
@@ -68,136 +48,55 @@ export class UsersService {
     }
   }
 
-  async signIn(
-    payload: AuthSignInDto,
-  ): Promise<SingleResponse<{ user: UsersEntity; token: string }>> {
+  async findAll(
+    payload: PaginationParams,
+  ): Promise<PaginationResponse<UsersEntity[]>> {
+    const page = payload.page || 1;
+    const limit = payload.limit || 10;
+    const count = await this.usersRepo.count();
+    if (!count) return getPaginationResponse([], page, limit, count);
+    const serverKeys = await this.usersRepo.find({
+      where: {},
+      skip: (page - 1) * limit,
+      take: limit,
+    });
+    return getPaginationResponse<UsersEntity>(serverKeys, page, limit, count);
+  }
+
+  async findOne(payload: ParamIdDto): Promise<SingleResponse<UsersEntity>> {
+    const user = await this.usersRepo.findOne({ where: { id: payload.id } });
+    if (!user) throw new NotFoundException('User not found');
+
+    return { result: user };
+  }
+
+  async findByEmail(email: string): Promise<UsersEntity> {
+    const user = await this.usersRepo.findOne({ where: { email } });
+    if (!user) throw new NotFoundException('User not found');
+    return user;
+  }
+
+  async update(payload: UpdateUserDto): Promise<SingleResponse<UsersEntity>> {
+    const { id } = payload;
+    const user = await this.usersRepo.findOne({ where: { id } });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
     try {
-      if (payload.password) {
-        payload.password = await bcrypt.hash(payload.password, 10);
-      }
-
-      const otp = await this.otpRepo.findOne({
-        where: {
-          email: payload.email,
-        },
+      Object.entries(user).forEach(([key, value]) => {
+        user[key] = payload[key] || value;
       });
-
-      if (!otp || otp.otp !== payload.otp) {
-        throw new HttpException('Invalid OTP', HttpStatus.UNAUTHORIZED);
-      }
-
-      if (otp.otpSendAt < new Date(Date.now() - 60000)) {
-        throw new HttpException('OTP expired', HttpStatus.UNAUTHORIZED);
-      }
-
-      const user = await this.usersRepo.findOne({
-        where: { email: payload.email },
-      });
-
-      if (!user) {
-        throw new HttpException('User not found', HttpStatus.NOT_FOUND);
-      }
-
-      Object.entries(payload).forEach(([key, value]) => {
-        if (value !== undefined && key !== 'otp') {
-          (user as any)[key] = value;
-        }
-      });
-
-      await this.usersRepo.save(user);
-
-      const token: string = await this.authorizationService.sign(
-        user.id,
-        user.email,
-      );
-
-      return { result: { user, token } };
+      return { result: await this.usersRepo.save(user) };
     } catch (error: any) {
       throw new HttpException(
-        `Failed to login. ${error.message || 'Unknown error'}`,
+        `Failed to update a user. ${error.message || 'Unknown error'}`,
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
   }
 
-  async loginHashed(
-    payload: AuthLoginDto,
-  ): Promise<SingleResponse<{ user: UsersEntity; token: string }>> {
-    try {
-      const user = await this.usersRepo.findOne({
-        where: { email: payload.email },
-        select: [
-          'id',
-          'email',
-          'password',
-          'firstName',
-          'lastName',
-          'birthday',
-          'gender',
-          'language',
-        ],
-      });
-
-      if (!user || !(await bcrypt.compare(payload.password, user.password))) {
-        throw new HttpException(
-          'Invalid email or password',
-          HttpStatus.UNAUTHORIZED,
-        );
-      }
-
-      const token: string = await this.authorizationService.sign(
-        user.id,
-        user.email,
-      );
-
-      return { result: { user, token } };
-    } catch (error: any) {
-      throw new HttpException(
-        `Failed to login. ${error.message || 'Unknown error'}`,
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
-  }
-
-  async loginPlain(
-    payload: AuthLoginDto,
-  ): Promise<SingleResponse<{ user: UsersEntity; token: string }>> {
-    try {
-      const user = await this.usersRepo.findOne({
-        where: { email: payload.email },
-        select: [
-          'id',
-          'email',
-          'password',
-          'firstName',
-          'lastName',
-          'birthday',
-          'gender',
-          'language',
-        ],
-      });
-
-      if (!user) {
-        throw new HttpException('User not found', HttpStatus.UNAUTHORIZED);
-      }
-      if (user.password === null) {
-        await this.usersRepo.update(
-          { id: user.id },
-          { password: payload.password },
-        );
-      }
-
-      const token: string = await this.authorizationService.sign(
-        user.id,
-        user.email,
-      );
-
-      return { result: { user, token } };
-    } catch (error: any) {
-      throw new HttpException(
-        `Failed to login. ${error.message || 'Unknown error'}`,
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
+  async remove(payload: ParamIdDto): Promise<DeleteResult> {
+    const { id } = payload;
+    return this.usersRepo.softDelete(id);
   }
 }

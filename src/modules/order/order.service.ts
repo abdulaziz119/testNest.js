@@ -12,6 +12,8 @@ import {
 } from '../../utils/dto/dto';
 import { getPaginationResponse } from '../../utils/pagination.builder';
 import { PaginationResponse } from '../../utils/pagination.response';
+import { CreateOrderDto, OrderResponseDto } from './dto/order.dto';
+import { UsersService } from '../users/users.service';
 
 @Injectable()
 export class OrdersService {
@@ -22,28 +24,52 @@ export class OrdersService {
     private basketRepository: Repository<BasketEntity>,
     @Inject(MODELS.PRODUCT)
     private productRepository: Repository<ProductEntity>,
+
+    private readonly usersService: UsersService,
   ) {}
 
-  async create(user: UsersEntity): Promise<SingleResponse<OrderEntity>> {
+  async create(
+    payload: CreateOrderDto,
+  ): Promise<SingleResponse<OrderResponseDto>> {
+    const user = await this.usersService.findOne({ id: payload.userId });
+    if (!user) throw new NotFoundException('User not found');
+
     const baskets = await this.basketRepository.find({
-      where: { user: { id: user.id } },
+      where: { user: { id: user.result.id } },
       relations: ['product'],
     });
     if (!baskets.length) throw new NotFoundException('Basket is empty');
 
     const orders = baskets.map((basket) =>
       this.orderRepository.create({
-        user,
+        user: user.result,
         product: basket.product,
         quantity: basket.quantity,
-        status: OrderStatus.PENDING,
+        status: payload.status || OrderStatus.PENDING,
       }),
     );
 
-    await this.basketRepository.delete({ user: { id: user.id } });
+    await this.basketRepository.delete({ user: { id: user.result.id } });
     const result = await this.orderRepository.save(orders);
 
-    return { result: result[0] };
+    const response = {
+      id: result[0].id,
+      user: {
+        id: user.result.id,
+        email: user.result.email,
+        firstName: user.result.firstName,
+        lastName: user.result.lastName,
+      },
+      product: {
+        id: result[0].product.id,
+        name: result[0].product.name,
+        price: result[0].product.price,
+      },
+      quantity: result[0].quantity,
+      status: result[0].status,
+    };
+
+    return { result: response };
   }
 
   async findAll(

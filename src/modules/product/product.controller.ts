@@ -9,6 +9,7 @@ import { PaginationResponse } from '../../utils/pagination.response';
 import { ProductsService } from './product.service';
 import { CreateProductDto, UpdateProductDto } from './dto/product.dto';
 import { ProductEntity } from '../../entity/product.entity';
+import { Auth } from '../auth/decorators/auth.decorator';
 
 @Controller('/product')
 export class ProductController {
@@ -16,6 +17,7 @@ export class ProductController {
 
   @Post('/create')
   @HttpCode(201)
+  @Auth()
   async create(
     @Body() body: CreateProductDto,
   ): Promise<SingleResponse<ProductEntity>> {
@@ -24,6 +26,7 @@ export class ProductController {
 
   @Post('/findAll')
   @HttpCode(200)
+  @Auth()
   async findAll(
     @Body() payload: PaginationParams,
   ): Promise<PaginationResponse<ProductEntity[]>> {
@@ -32,6 +35,7 @@ export class ProductController {
 
   @Post('/findOne')
   @HttpCode(200)
+  @Auth()
   async findOne(
     @Body() body: ParamIdDto,
   ): Promise<SingleResponse<ProductEntity>> {
@@ -40,6 +44,7 @@ export class ProductController {
 
   @Post('/update')
   @HttpCode(202)
+  @Auth()
   async update(
     @Body() body: UpdateProductDto,
   ): Promise<SingleResponse<ProductEntity>> {
@@ -47,6 +52,7 @@ export class ProductController {
   }
 
   @Post('/remove')
+  @Auth()
   @HttpCode(204)
   async delete(@Body() body: ParamIdDto): Promise<DeleteResult> {
     return this.productService.remove(body);

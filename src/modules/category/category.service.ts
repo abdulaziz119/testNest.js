@@ -47,21 +47,6 @@ export class CategoryService {
     return { result: newCategory };
   }
 
-  // async create(
-  //   payload: CreateCategoryDto,
-  // ): Promise<SingleResponse<CategoryEntity>> {
-  //   const { parentId, ...rest } = payload;
-  //   let category = this.categoryRepository.create(rest);
-  //   if (parentId) {
-  //     category.parent = await this.categoryRepository.findOne({
-  //       where: { id: parentId },
-  //     });
-  //   }
-  //   const newCategory: CategoryEntity =
-  //     await this.categoryRepository.save(category);
-  //   return { result: newCategory };
-  // }
-
   async findAll(
     payload: PaginationParams,
   ): Promise<PaginationResponse<CategoryEntity[]>> {
