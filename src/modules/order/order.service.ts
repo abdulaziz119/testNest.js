@@ -31,16 +31,18 @@ export class OrdersService {
   async create(
     payload: CreateOrderDto,
   ): Promise<SingleResponse<OrderResponseDto>> {
-    const user = await this.usersService.findOne({ id: payload.userId });
+    const user: SingleResponse<UsersEntity> = await this.usersService.findOne({
+      id: payload.userId,
+    });
     if (!user) throw new NotFoundException('User not found');
 
-    const baskets = await this.basketRepository.find({
+    const baskets: BasketEntity[] = await this.basketRepository.find({
       where: { user: { id: user.result.id } },
       relations: ['product'],
     });
     if (!baskets.length) throw new NotFoundException('Basket is empty');
 
-    const orders = baskets.map((basket) =>
+    const orders: OrderEntity[] = baskets.map((basket) =>
       this.orderRepository.create({
         user: user.result,
         product: basket.product,
@@ -50,7 +52,7 @@ export class OrdersService {
     );
 
     await this.basketRepository.delete({ user: { id: user.result.id } });
-    const result = await this.orderRepository.save(orders);
+    const result: OrderEntity[] = await this.orderRepository.save(orders);
 
     const response = {
       id: result[0].id,
@@ -75,11 +77,11 @@ export class OrdersService {
   async findAll(
     payload: PaginationParams,
   ): Promise<PaginationResponse<OrderEntity[]>> {
-    const page = payload.page || 1;
-    const limit = payload.limit || 10;
-    const count = await this.orderRepository.count();
+    const page: number = payload.page || 1;
+    const limit: number = payload.limit || 10;
+    const count: number = await this.orderRepository.count();
     if (!count) return getPaginationResponse([], page, limit, count);
-    const serverKeys = await this.orderRepository.find({
+    const serverKeys: OrderEntity[] = await this.orderRepository.find({
       relations: ['user', 'product'],
       skip: (page - 1) * limit,
       take: limit,
@@ -90,7 +92,7 @@ export class OrdersService {
   async findUserOrders(
     user: UsersEntity,
   ): Promise<SingleResponse<OrderEntity[]>> {
-    const orders = await this.orderRepository.find({
+    const orders: OrderEntity[] = await this.orderRepository.find({
       where: { user: { id: user.id } },
       relations: ['product'],
     });
@@ -99,7 +101,7 @@ export class OrdersService {
   }
 
   async findOne(payload: ParamIdDto): Promise<SingleResponse<OrderEntity>> {
-    const order = await this.orderRepository.findOne({
+    const order: OrderEntity = await this.orderRepository.findOne({
       where: { id: payload.id },
       relations: ['user', 'product'],
     });

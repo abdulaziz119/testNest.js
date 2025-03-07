@@ -1,7 +1,6 @@
 import { Body, Controller, HttpCode, Post } from '@nestjs/common';
 import { DeleteResult } from 'typeorm';
 import { ParamIdDto, SingleResponse } from '../../utils/dto/dto';
-import { UsersEntity } from '../../entity/users.entity';
 import { BasketsService } from './basket.service';
 import { BasketEntity } from '../../entity/basket.entity';
 import {

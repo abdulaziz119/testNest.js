@@ -6,6 +6,7 @@ import {
   IsOptional,
   IsDateString,
   IsDefined,
+  IsNotEmpty,
 } from 'class-validator';
 import { Gender, UserLanguage } from '../../../entity/users.entity';
 export class CreateUserDto {
@@ -61,6 +62,12 @@ export class UpdateUserDto {
   @MinLength(6)
   @IsOptional()
   password?: string;
+}
+
+export class AuthOtpDto {
+  @IsEmail()
+  @IsNotEmpty()
+  email: string;
 }
 
 export class UserResponseDto {

@@ -87,7 +87,7 @@ export class AuthService {
       }
       otp.retryCount += 1;
       await this.otpRepo.update({ email: payload.email }, otp);
-      const user = await this.usersRepo.findOne({
+      const user: UsersEntity = await this.usersRepo.findOne({
         where: {
           email: payload.email,
         },
@@ -113,7 +113,7 @@ export class AuthService {
     payload: AuthLoginDto,
   ): Promise<SingleResponse<{ user: UsersEntity; token: string }>> {
     try {
-      const user = await this.usersRepo.findOne({
+      const user: UsersEntity = await this.usersRepo.findOne({
         where: { email: payload.email },
         select: [
           'id',

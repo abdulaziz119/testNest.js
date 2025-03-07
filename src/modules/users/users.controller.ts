@@ -9,7 +9,7 @@ import { UsersService } from './users.service';
 import { Auth } from '../auth/decorators/auth.decorator';
 import { UpdateCategoryDto } from '../category/dto/categories.dto';
 import { PaginationResponse } from '../../utils/pagination.response';
-import { CreateUserDto } from './dto/users.dto';
+import { AuthOtpDto, CreateUserDto } from './dto/users.dto';
 import { UsersEntity } from '../../entity/users.entity';
 
 @Controller('/users')
@@ -41,6 +41,15 @@ export class UsersController {
     @Body() body: ParamIdDto,
   ): Promise<SingleResponse<UsersEntity>> {
     return await this.usersService.findOne(body);
+  }
+
+  @Post('/findByEmail')
+  @HttpCode(200)
+  @Auth()
+  async findByEmail(
+    @Body() body: AuthOtpDto,
+  ): Promise<SingleResponse<UsersEntity>> {
+    return await this.usersService.findByEmail(body);
   }
 
   @Post('/update')

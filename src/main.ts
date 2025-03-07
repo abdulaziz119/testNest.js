@@ -1,11 +1,11 @@
 import { NestFactory } from '@nestjs/core';
-import { FrontendModule } from './app.module';
+import { AppModule } from './app.module';
 import * as bodyParser from 'body-parser';
 import { ValidationPipe } from '@nestjs/common';
 import { PORT } from './utils/env';
 
 async function bootstrap() {
-  const app = await NestFactory.create(FrontendModule);
+  const app = await NestFactory.create(AppModule);
 
   app.setGlobalPrefix('api');
 

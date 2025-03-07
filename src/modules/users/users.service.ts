@@ -15,7 +15,12 @@ import {
 import * as bcrypt from 'bcryptjs';
 import { DeleteResult } from 'typeorm';
 import { UsersEntity } from '../../entity/users.entity';
-import { CreateUserDto, UpdateUserDto, UserResponseDto } from './dto/users.dto';
+import {
+  AuthOtpDto,
+  CreateUserDto,
+  UpdateUserDto,
+  UserResponseDto,
+} from './dto/users.dto';
 import { PaginationResponse } from '../../utils/pagination.response';
 import { getPaginationResponse } from '../../utils/pagination.builder';
 
@@ -50,11 +55,11 @@ export class UsersService {
   async findAll(
     payload: PaginationParams,
   ): Promise<PaginationResponse<UsersEntity[]>> {
-    const page = payload.page || 1;
-    const limit = payload.limit || 10;
-    const count = await this.usersRepo.count();
+    const page: number = payload.page || 1;
+    const limit: number = payload.limit || 10;
+    const count: number = await this.usersRepo.count();
     if (!count) return getPaginationResponse([], page, limit, count);
-    const serverKeys = await this.usersRepo.find({
+    const serverKeys: UsersEntity[] = await this.usersRepo.find({
       where: {},
       skip: (page - 1) * limit,
       take: limit,
@@ -63,21 +68,25 @@ export class UsersService {
   }
 
   async findOne(payload: ParamIdDto): Promise<SingleResponse<UsersEntity>> {
-    const user = await this.usersRepo.findOne({ where: { id: payload.id } });
+    const user: UsersEntity = await this.usersRepo.findOne({
+      where: { id: payload.id },
+    });
     if (!user) throw new NotFoundException('User not found');
 
     return { result: user };
   }
 
-  async findByEmail(email: string): Promise<UsersEntity> {
-    const user = await this.usersRepo.findOne({ where: { email } });
+  async findByEmail(payload: AuthOtpDto): Promise<SingleResponse<UsersEntity>> {
+    const user: UsersEntity = await this.usersRepo.findOne({
+      where: { email: payload.email },
+    });
     if (!user) throw new NotFoundException('User not found');
-    return user;
+    return { result: user };
   }
 
   async update(payload: UpdateUserDto): Promise<SingleResponse<UsersEntity>> {
     const { id } = payload;
-    const user = await this.usersRepo.findOne({ where: { id } });
+    const user: UsersEntity = await this.usersRepo.findOne({ where: { id } });
     if (!user) {
       throw new NotFoundException('User not found');
     }

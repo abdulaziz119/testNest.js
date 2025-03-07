@@ -28,12 +28,13 @@ export class CategoryService {
     payload: CreateCategoryDto,
   ): Promise<SingleResponse<CategoryEntity>> {
     const { parentId, ...rest } = payload;
-    let category = this.categoryRepository.create(rest);
+    let category: CategoryEntity = this.categoryRepository.create(rest);
 
     if (parentId) {
-      const parentCategory = await this.categoryRepository.findOne({
-        where: { id: parentId },
-      });
+      const parentCategory: CategoryEntity =
+        await this.categoryRepository.findOne({
+          where: { id: parentId },
+        });
 
       if (!parentCategory) {
         throw new Error(`Parent category with id ${parentId} not found`);
@@ -54,7 +55,7 @@ export class CategoryService {
     const limit: number = payload.limit || 10;
     const count: number = await this.categoryRepository.count();
     if (!count) return getPaginationResponse([], page, limit, count);
-    const serverKeys = await this.categoryRepository.find({
+    const serverKeys: CategoryEntity[] = await this.categoryRepository.find({
       relations: ['parent', 'children'],
       skip: (page - 1) * limit,
       take: limit,

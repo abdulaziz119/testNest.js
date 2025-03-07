@@ -51,12 +51,6 @@ export class AuthLoginDto {
   password: string;
 }
 
-export class AuthResDto {
-  access_token: string;
-  expires_in: number;
-  token_type: string;
-}
-
 export class AuthVerifyDto {
   @IsEmail()
   @IsNotEmpty()
@@ -65,10 +59,4 @@ export class AuthVerifyDto {
   @IsString()
   @IsNotEmpty()
   otp: string;
-}
-
-export class AuthOtpDto {
-  @IsEmail()
-  @IsNotEmpty()
-  email: string;
 }

@@ -6,7 +6,6 @@ import { productProviders } from '../product/product.providers';
 import { OrdersService } from './order.service';
 import { basketProviders } from '../basket/basket.providers';
 import { Module } from '@nestjs/common';
-import { usersProviders } from '../users/users.providers';
 
 @Module({
   imports: [DatabaseModule, UsersModule],

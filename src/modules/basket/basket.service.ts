@@ -28,17 +28,17 @@ export class BasketsService {
     addToBasketDto: AddToBasketDto,
   ): Promise<SingleResponse<BasketEntity>> {
     const { userId, productId, quantity } = addToBasketDto;
-    const product = await this.productRepository.findOne({
+    const product: ProductEntity = await this.productRepository.findOne({
       where: { id: productId },
     });
     if (!product) throw new NotFoundException('Product not found');
 
-    const user = await this.usersRepository.findOne({
+    const user: UsersEntity = await this.usersRepository.findOne({
       where: { id: userId },
     });
     if (!user) throw new NotFoundException('User not found');
 
-    let basket = await this.basketRepository.findOne({
+    let basket: BasketEntity = await this.basketRepository.findOne({
       where: {
         user: { id: user.id },
         product: { id: productId },
@@ -53,7 +53,7 @@ export class BasketsService {
         quantity,
       });
     }
-    const newBasket = await this.basketRepository.save(basket);
+    const newBasket: BasketEntity = await this.basketRepository.save(basket);
     return { result: newBasket };
   }
 
@@ -64,7 +64,7 @@ export class BasketsService {
     const limit: number = payload.limit || 10;
     const count: number = await this.basketRepository.count();
     if (!count) return getPaginationResponse([], page, limit, count);
-    const serverKeys = await this.basketRepository.find({
+    const serverKeys: BasketEntity[] = await this.basketRepository.find({
       where: { user: { id: payload.id } },
       relations: ['product'],
       skip: (page - 1) * limit,
@@ -76,7 +76,7 @@ export class BasketsService {
   async update(
     updateBasketDto: UpdateBasketDto,
   ): Promise<SingleResponse<BasketEntity>> {
-    const basket = await this.basketRepository.findOne({
+    const basket: BasketEntity = await this.basketRepository.findOne({
       where: { id: updateBasketDto.id, user: { id: updateBasketDto.user_id } },
     });
     if (!basket) throw new NotFoundException('Basket item not found');
@@ -87,9 +87,5 @@ export class BasketsService {
   async remove(payload: ParamIdDto): Promise<DeleteResult> {
     const { id } = payload;
     return await this.basketRepository.softDelete(id);
-  }
-
-  async clear(user: UsersEntity): Promise<void> {
-    await this.basketRepository.delete({ user: { id: user.id } });
   }
 }
