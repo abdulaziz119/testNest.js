@@ -12,7 +12,9 @@ services:
     volumes:
       - .:/src
       - /src/dist
-
+    depends_on:
+      - postgres
+      - redis
 
   postgres:
     image: postgres
@@ -23,3 +25,15 @@ services:
       POSTGRES_DB: services
     ports:
       - "5433:5432"
+
+  redis:
+    image: redis:alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    command: redis-server --databases 2
+    volumes:
+      - redis_data:/data
+
+volumes:
+  redis_data:

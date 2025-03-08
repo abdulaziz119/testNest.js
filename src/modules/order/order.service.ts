@@ -14,6 +14,9 @@ import { getPaginationResponse } from '../../utils/pagination.builder';
 import { PaginationResponse } from '../../utils/pagination.response';
 import { CreateOrderDto, OrderResponseDto } from './dto/order.dto';
 import { UsersService } from '../users/users.service';
+import { InjectQueue } from '@nestjs/bull';
+import { Queue } from 'bull';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
 
 @Injectable()
 export class OrdersService {
@@ -24,54 +27,50 @@ export class OrdersService {
     private basketRepository: Repository<BasketEntity>,
     @Inject(MODELS.PRODUCT)
     private productRepository: Repository<ProductEntity>,
-
     private readonly usersService: UsersService,
+    @InjectQueue(CACHE_MANAGER)
+    private readonly ordersQueue: Queue,
   ) {}
 
   async create(
     payload: CreateOrderDto,
   ): Promise<SingleResponse<OrderResponseDto>> {
-    const user: SingleResponse<UsersEntity> = await this.usersService.findOne({
-      id: payload.userId,
-    });
-    if (!user) throw new NotFoundException('User not found');
+    try {
+      const user: SingleResponse<UsersEntity> = await this.usersService.findOne(
+        {
+          id: payload.userId,
+        },
+      );
+      if (!user) throw new NotFoundException('User not found');
 
-    const baskets: BasketEntity[] = await this.basketRepository.find({
-      where: { user: { id: user.result.id } },
-      relations: ['product'],
-    });
-    if (!baskets.length) throw new NotFoundException('Basket is empty');
+      const baskets: BasketEntity[] = await this.basketRepository.find({
+        where: { user: { id: user.result.id } },
+        relations: ['product'],
+      });
+      if (!baskets.length) throw new NotFoundException('Basket is empty');
 
-    const orders: OrderEntity[] = baskets.map((basket) =>
-      this.orderRepository.create({
-        user: user.result,
-        product: basket.product,
-        quantity: basket.quantity,
-        status: payload.status || OrderStatus.PENDING,
-      }),
-    );
+      const orders: OrderEntity[] = baskets.map(
+        (basket: BasketEntity): OrderEntity =>
+          this.orderRepository.create({
+            user: user.result,
+            product: basket.product,
+            quantity: basket.quantity,
+            status: payload.status || OrderStatus.PENDING,
+          }),
+      );
 
-    await this.basketRepository.delete({ user: { id: user.result.id } });
-    const result: OrderEntity[] = await this.orderRepository.save(orders);
+      await this.basketRepository.delete({ user: { id: user.result.id } });
+      const result: OrderEntity[] = await this.orderRepository.save(orders);
 
-    const response = {
-      id: result[0].id,
-      user: {
-        id: user.result.id,
-        email: user.result.email,
-        firstName: user.result.firstName,
-        lastName: user.result.lastName,
-      },
-      product: {
-        id: result[0].product.id,
-        name: result[0].product.name,
-        price: result[0].product.price,
-      },
-      quantity: result[0].quantity,
-      status: result[0].status,
-    };
+      this.ordersQueue.add('create', result[0]).catch((error) => {
+        console.error('Error adding order to queue:', error);
+      });
 
-    return { result: response };
+      return { result: result[0] };
+    } catch (error) {
+      console.error('Error creating order:', error);
+      throw error;
+    }
   }
 
   async findAll(

@@ -23,8 +23,13 @@ export class OrderController {
     @Body() payload: CreateOrderDto,
     @User() user,
   ): Promise<SingleResponse<OrderResponseDto>> {
-    payload.userId = user.id;
-    return await this.orderService.create(payload);
+    try {
+      payload.userId = user.id;
+      return await this.orderService.create(payload);
+    } catch (error) {
+      console.error('Error in create order controller:', error);
+      throw error;
+    }
   }
 
   @Post('/findAll')

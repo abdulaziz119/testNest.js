@@ -8,3 +8,5 @@ export const MODELS = {
   PRODUCT: 'PRODUCT_MODEL',
   CATEGORY: 'CATEGORY_MODEL',
 };
+
+export const CACHE_TTL = 3600 * 1000;

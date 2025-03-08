@@ -17,6 +17,8 @@ import {
 } from '../../utils/dto/dto';
 import { getPaginationResponse } from '../../utils/pagination.builder';
 import { PaginationResponse } from '../../utils/pagination.response';
+import { Cache } from 'cache-manager';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
 
 @Injectable()
 export class ProductsService {
@@ -25,6 +27,8 @@ export class ProductsService {
     private productRepository: Repository<ProductEntity>,
     @Inject(MODELS.CATEGORY)
     private categoryRepository: Repository<CategoryEntity>,
+    @Inject(CACHE_MANAGER)
+    private cacheManager: Cache,
   ) {}
 
   async create(
@@ -41,6 +45,9 @@ export class ProductsService {
         category,
       });
       await this.productRepository.save(product);
+
+      await this.cacheManager.del('products_all');
+
       return { result: product };
     } catch (error) {
       throw new HttpException(
@@ -55,6 +62,14 @@ export class ProductsService {
   ): Promise<PaginationResponse<ProductEntity[]>> {
     const page: number = payload.page || 1;
     const limit: number = payload.limit || 10;
+
+    const cacheKey = `products_all_page${page}_limit${limit}`;
+
+    const cachedProducts = await this.cacheManager.get(cacheKey);
+    if (cachedProducts) {
+      return cachedProducts as PaginationResponse<ProductEntity[]>;
+    }
+
     const count: number = await this.productRepository.count();
 
     if (!count) return getPaginationResponse([], page, limit, count);
@@ -64,18 +79,40 @@ export class ProductsService {
       skip: (page - 1) * limit,
       take: limit,
     });
-    return getPaginationResponse<ProductEntity>(serverKeys, page, limit, count);
+
+    const response = getPaginationResponse<ProductEntity>(
+      serverKeys,
+      page,
+      limit,
+      count,
+    );
+
+    await this.cacheManager.set(cacheKey, response);
+
+    return response;
   }
 
   async findOne(payload: ParamIdDto): Promise<SingleResponse<ProductEntity>> {
     try {
+      const cacheKey = `product_${payload.id}`;
+
+      const cachedProduct = await this.cacheManager.get(cacheKey);
+      if (cachedProduct) {
+        return cachedProduct as SingleResponse<ProductEntity>;
+      }
+
       const product: ProductEntity | null =
         await this.productRepository.findOne({
           where: { id: payload.id },
           relations: ['category'],
         });
       if (!product) throw new NotFoundException('Product not found');
-      return { result: product };
+
+      const response = { result: product };
+
+      await this.cacheManager.set(cacheKey, response);
+
+      return response;
     } catch (error) {
       throw new HttpException(
         'Error getting product',
@@ -99,6 +136,10 @@ export class ProductsService {
 
       const updatedProduct: ProductEntity =
         await this.productRepository.save(product);
+
+      await this.cacheManager.del(`product_${id}`);
+      await this.cacheManager.del('products_all');
+
       return { result: updatedProduct };
     } catch (error) {
       throw new HttpException(
@@ -110,6 +151,10 @@ export class ProductsService {
 
   async remove(payload: ParamIdDto): Promise<DeleteResult> {
     const { id } = payload;
+
+    await this.cacheManager.del(`product_${id}`);
+    await this.cacheManager.del('products_all');
+
     return this.categoryRepository.softDelete(id);
   }
 }
