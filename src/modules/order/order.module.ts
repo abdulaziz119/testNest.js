@@ -8,14 +8,13 @@ import { basketProviders } from '../basket/basket.providers';
 import { Module } from '@nestjs/common';
 import { BullModule } from '@nestjs/bull';
 import { OrderProcessor } from './order.processor';
-import { CACHE_MANAGER } from '@nestjs/cache-manager';
 
 @Module({
   imports: [
     DatabaseModule,
     UsersModule,
     BullModule.registerQueue({
-      name: CACHE_MANAGER,
+      name: 'orders',
     }),
   ],
   controllers: [OrderController],

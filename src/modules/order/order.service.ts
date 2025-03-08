@@ -16,7 +16,6 @@ import { CreateOrderDto, OrderResponseDto } from './dto/order.dto';
 import { UsersService } from '../users/users.service';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
-import { CACHE_MANAGER } from '@nestjs/cache-manager';
 
 @Injectable()
 export class OrdersService {
@@ -28,7 +27,7 @@ export class OrdersService {
     @Inject(MODELS.PRODUCT)
     private productRepository: Repository<ProductEntity>,
     private readonly usersService: UsersService,
-    @InjectQueue(CACHE_MANAGER)
+    @InjectQueue('orders')
     private readonly ordersQueue: Queue,
   ) {}
 

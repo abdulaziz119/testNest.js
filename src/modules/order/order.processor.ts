@@ -1,9 +1,8 @@
 import { Process, Processor } from '@nestjs/bull';
 import { Logger } from '@nestjs/common';
 import { Job } from 'bull';
-import { CACHE_MANAGER } from '@nestjs/cache-manager';
 
-@Processor(CACHE_MANAGER)
+@Processor('orders')
 export class OrderProcessor {
   private readonly logger = new Logger(OrderProcessor.name);
 
