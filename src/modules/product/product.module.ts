@@ -20,8 +20,6 @@ import { REDIS_HOST, REDIS_PORT } from '../../utils/env';
       db: 0,
       // Redis operatsiya davomida log qilish
       debug: false,
-      // Tez-tez redis ulanishini tekshirish
-      pingInterval: 1000,
     }),
   ],
   controllers: [ProductController],
