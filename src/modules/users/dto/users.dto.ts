@@ -52,29 +52,36 @@ export class CreateUserDto {
 }
 
 export class UpdateUserDto {
+  @ApiProperty({ example: 1 })
   @IsDefined()
   id: number;
 
+  @ApiProperty({ example: 'test' })
   @IsString()
   @IsOptional()
   firstName?: string;
 
+  @ApiProperty({ example: 'test' })
   @IsString()
   @IsOptional()
   lastName?: string;
 
+  @ApiProperty({ example: 'male' })
   @IsEnum(Gender)
   @IsOptional()
   gender?: Gender;
 
+  @ApiProperty({ example: '2004-09-09T07:32:34.277Z' })
   @IsDateString()
   @IsOptional()
   birthday?: string;
 
+  @ApiProperty({ example: 'uz' })
   @IsEnum(UserLanguage)
   @IsOptional()
   language?: UserLanguage;
 
+  @ApiProperty({ example: '12345678' })
   @IsString()
   @MinLength(6)
   @IsOptional()
@@ -82,6 +89,7 @@ export class UpdateUserDto {
 }
 
 export class AuthOtpDto {
+  @ApiProperty({ example: 'test@gmail.com' })
   @IsEmail()
   @IsNotEmpty()
   email: string;

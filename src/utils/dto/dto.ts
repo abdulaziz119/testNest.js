@@ -15,6 +15,12 @@ export class ParamIdDto {
   @IsDefined()
   id: number;
 }
+
+export class ParamUserIdDto {
+  @ApiProperty({ example: 1 })
+  @IsDefined()
+  user_id: number;
+}
 export interface SingleResponse<T> {
   result: T;
 }

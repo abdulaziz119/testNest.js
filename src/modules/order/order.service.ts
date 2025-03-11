@@ -8,6 +8,7 @@ import { UsersEntity } from '../../entity/users.entity';
 import {
   PaginationParams,
   ParamIdDto,
+  ParamUserIdDto,
   SingleResponse,
 } from '../../utils/dto/dto';
 import { getPaginationResponse } from '../../utils/pagination.builder';
@@ -88,10 +89,10 @@ export class OrdersService {
   }
 
   async findUserOrders(
-    user: UsersEntity,
+    user: ParamUserIdDto,
   ): Promise<SingleResponse<OrderEntity[]>> {
     const orders: OrderEntity[] = await this.orderRepository.find({
-      where: { user: { id: user.id } },
+      where: { user: { id: user.user_id } },
       relations: ['product'],
     });
     if (!orders) throw new NotFoundException('Orders not found');

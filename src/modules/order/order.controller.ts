@@ -2,6 +2,7 @@ import { Body, Controller, HttpCode, Post } from '@nestjs/common';
 import {
   PaginationParams,
   ParamIdDto,
+  ParamUserIdDto,
   SingleResponse,
 } from '../../utils/dto/dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
@@ -57,7 +58,7 @@ export class OrderController {
   @HttpCode(200)
   @Auth()
   async findUserOrders(
-    @Body() body: UsersEntity,
+    @Body() body: ParamUserIdDto,
   ): Promise<SingleResponse<OrderEntity[]>> {
     return await this.orderService.findUserOrders(body);
   }
