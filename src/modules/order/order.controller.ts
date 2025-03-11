@@ -4,6 +4,7 @@ import {
   ParamIdDto,
   SingleResponse,
 } from '../../utils/dto/dto';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { PaginationResponse } from '../../utils/pagination.response';
 import { OrdersService } from './order.service';
 import { UsersEntity } from '../../entity/users.entity';
@@ -12,6 +13,8 @@ import { Auth } from '../auth/decorators/auth.decorator';
 import { User } from '../auth/decorators/user.decorator';
 import { CreateOrderDto, OrderResponseDto } from './dto/order.dto';
 
+@ApiBearerAuth()
+@ApiTags('Order')
 @Controller('/order')
 export class OrderController {
   constructor(private readonly orderService: OrdersService) {}

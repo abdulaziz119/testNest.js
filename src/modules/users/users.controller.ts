@@ -4,6 +4,7 @@ import {
   ParamIdDto,
   SingleResponse,
 } from '../../utils/dto/dto';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { DeleteResult } from 'typeorm';
 import { UsersService } from './users.service';
 import { Auth } from '../auth/decorators/auth.decorator';
@@ -12,6 +13,8 @@ import { PaginationResponse } from '../../utils/pagination.response';
 import { AuthOtpDto, CreateUserDto } from './dto/users.dto';
 import { UsersEntity } from '../../entity/users.entity';
 
+@ApiBearerAuth()
+@ApiTags('User')
 @Controller('/users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}

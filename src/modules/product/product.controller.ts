@@ -4,6 +4,7 @@ import {
   ParamIdDto,
   SingleResponse,
 } from '../../utils/dto/dto';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { DeleteResult } from 'typeorm';
 import { PaginationResponse } from '../../utils/pagination.response';
 import { ProductsService } from './product.service';
@@ -11,6 +12,8 @@ import { CreateProductDto, UpdateProductDto } from './dto/product.dto';
 import { ProductEntity } from '../../entity/product.entity';
 import { Auth } from '../auth/decorators/auth.decorator';
 
+@ApiBearerAuth()
+@ApiTags('Product')
 @Controller('/product')
 export class ProductController {
   constructor(private readonly productService: ProductsService) {}

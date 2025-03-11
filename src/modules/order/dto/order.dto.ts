@@ -1,13 +1,16 @@
 import { OrderStatus } from '../../../entity/order.entity';
 import { IsEnum, IsNumber, IsOptional } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateOrderDto {
   userId: number;
 
+  @ApiProperty({ example: 1 })
   @IsNumber()
   @IsOptional()
   basketId?: number;
 
+  @ApiProperty({ example: 'pending' })
   @IsEnum(OrderStatus)
   @IsOptional()
   status?: OrderStatus = OrderStatus.PENDING;

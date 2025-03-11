@@ -3,7 +3,10 @@ import { AuthLoginDto, AuthRegisterDto, AuthVerifyDto } from './auth.dto';
 import { AuthService } from './auth.service';
 import { SingleResponse } from '../../utils/dto/dto';
 import { UsersEntity } from '../../entity/users.entity';
+import { ErrorResourceDto } from '../../utils/dto/error.dto';
+import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
@@ -24,6 +27,7 @@ export class AuthController {
     return this.authService.signVerify(body);
   }
 
+  @ApiResponse({ type: ErrorResourceDto, status: 401 })
   @Post('/login')
   @HttpCode(200)
   async login(

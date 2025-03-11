@@ -4,6 +4,7 @@ import {
   ParamIdDto,
   SingleResponse,
 } from '../../utils/dto/dto';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { DeleteResult } from 'typeorm';
 import { CreateCategoryDto, UpdateCategoryDto } from './dto/categories.dto';
 import { CategoryEntity } from '../../entity/category.entity';
@@ -11,6 +12,8 @@ import { CategoryService } from './category.service';
 import { PaginationResponse } from '../../utils/pagination.response';
 import { Auth } from '../auth/decorators/auth.decorator';
 
+@ApiBearerAuth()
+@ApiTags('Category')
 @Controller('/category')
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}

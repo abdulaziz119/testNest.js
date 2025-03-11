@@ -8,10 +8,13 @@ import {
   PaginationBasketParams,
   UpdateBasketDto,
 } from './dto/basket.dto';
+import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { PaginationResponse } from '../../utils/pagination.response';
 import { Auth } from '../auth/decorators/auth.decorator';
 import { User } from '../auth/decorators/user.decorator';
 
+@ApiBearerAuth()
+@ApiTags('Basket')
 @Controller('/basket')
 export class BasketController {
   constructor(private readonly basketService: BasketsService) {}
