@@ -1,10 +1,9 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { DatabaseModule } from './database/database.module';
-import { LoggerMiddleware } from './utils/middleware/logger.middleware';
-import { ModulesModule } from './modules/modules.module';
 import { BullModule } from '@nestjs/bull';
-import { REDIS_HOST, REDIS_PORT } from './utils/env';
+import { LoggerMiddleware, REDIS_HOST, REDIS_PORT } from './utils';
+import { DatabaseModule } from './database';
+import { ModulesModule } from './modules';
 
 @Module({
   imports: [

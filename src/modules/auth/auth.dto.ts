@@ -6,8 +6,8 @@ import {
   IsNotEmpty,
   IsString,
 } from 'class-validator';
-import { Gender, UserLanguage } from '../../entity/users.entity';
 import { ApiProperty } from '@nestjs/swagger';
+import { Gender, UserLanguage } from '../../entity';
 
 export class AuthRegisterDto {
   @ApiProperty({ example: 'test' })

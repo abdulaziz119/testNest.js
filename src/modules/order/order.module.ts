@@ -1,13 +1,13 @@
-import { UsersModule } from '../users/users.module';
-import { DatabaseModule } from '../../database/database.module';
 import { OrderController } from './order.controller';
 import { orderProviders } from './order.providers';
-import { productProviders } from '../product/product.providers';
 import { OrdersService } from './order.service';
-import { basketProviders } from '../basket/basket.providers';
 import { Module } from '@nestjs/common';
 import { BullModule } from '@nestjs/bull';
 import { OrderProcessor } from './order.processor';
+import { DatabaseModule } from '../../database';
+import { UsersModule } from '../users';
+import { productProviders } from '../product';
+import { basketProviders } from '../basket';
 
 @Module({
   imports: [

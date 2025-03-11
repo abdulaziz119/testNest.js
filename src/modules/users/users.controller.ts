@@ -1,17 +1,17 @@
 import { Body, Controller, HttpCode, Post } from '@nestjs/common';
-import {
-  PaginationParams,
-  ParamIdDto,
-  SingleResponse,
-} from '../../utils/dto/dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { DeleteResult } from 'typeorm';
 import { UsersService } from './users.service';
-import { Auth } from '../auth/decorators/auth.decorator';
-import { UpdateCategoryDto } from '../category/dto/categories.dto';
-import { PaginationResponse } from '../../utils/pagination.response';
 import { AuthOtpDto, CreateUserDto } from './dto/users.dto';
-import { UsersEntity } from '../../entity/users.entity';
+import {
+  PaginationParams,
+  PaginationResponse,
+  ParamIdDto,
+  SingleResponse,
+} from '../../utils';
+import { UsersEntity } from '../../entity';
+import { UpdateCategoryDto } from '../category';
+import { Auth } from '../auth/decorators';
 
 @ApiBearerAuth()
 @ApiTags('User')

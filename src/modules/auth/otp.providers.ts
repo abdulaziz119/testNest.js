@@ -1,6 +1,6 @@
 import { DataSource } from 'typeorm';
+import { OtpEntity } from '../../entity';
 import { MODELS, PAY_NET_CONNECT_SOURCE } from '../../constants';
-import { OtpEntity } from '../../entity/otp.entity';
 
 export const otpProviders = [
   {

@@ -1,6 +1,6 @@
 import { DataSource } from 'typeorm';
+import { CategoryEntity } from '../../entity';
 import { MODELS, PAY_NET_CONNECT_SOURCE } from '../../constants';
-import { CategoryEntity } from '../../entity/category.entity';
 
 export const categoryProviders = [
   {

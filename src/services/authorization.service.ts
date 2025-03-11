@@ -2,9 +2,9 @@ import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import * as jwt from 'jsonwebtoken';
 import * as dotenv from 'dotenv';
 import { Repository } from 'typeorm';
+import { UsersEntity } from '../entity';
+import { JWT_SECRET } from '../utils';
 import { MODELS } from '../constants';
-import { UsersEntity } from '../entity/users.entity';
-import { JWT_SECRET } from '../utils/env';
 
 dotenv.config();
 

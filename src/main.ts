@@ -5,7 +5,7 @@ import { ValidationPipe } from '@nestjs/common';
 import * as bodyParser from 'body-parser';
 
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { PORT } from './utils/env';
+import { PORT } from './utils';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);

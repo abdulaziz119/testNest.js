@@ -1,10 +1,9 @@
 import { Body, Controller, HttpCode, Post } from '@nestjs/common';
 import { AuthLoginDto, AuthRegisterDto, AuthVerifyDto } from './auth.dto';
 import { AuthService } from './auth.service';
-import { SingleResponse } from '../../utils/dto/dto';
-import { UsersEntity } from '../../entity/users.entity';
-import { ErrorResourceDto } from '../../utils/dto/error.dto';
-import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ErrorResourceDto, SingleResponse } from '../../utils';
+import { UsersEntity } from '../../entity';
 
 @ApiTags('Auth')
 @Controller('auth')

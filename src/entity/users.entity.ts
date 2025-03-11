@@ -1,5 +1,5 @@
 import { Column, Entity, Unique, Index, OneToMany } from 'typeorm';
-import { DB_SCHEMA } from '../utils/env';
+import { DB_SCHEMA } from '../utils';
 import { BaseEntity } from './base.entity';
 import { BasketEntity } from './basket.entity';
 import { OrderEntity } from './order.entity';

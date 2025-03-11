@@ -1,6 +1,6 @@
 import { DataSource } from 'typeorm';
+import { BasketEntity } from '../../entity';
 import { MODELS, PAY_NET_CONNECT_SOURCE } from '../../constants';
-import { BasketEntity } from '../../entity/basket.entity';
 
 export const basketProviders = [
   {

@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
-import { DatabaseModule } from '../../database/database.module';
 import { BasketController } from './basket.controller';
 import { basketProviders } from './basket.providers';
 import { BasketsService } from './basket.service';
-import { productProviders } from '../product/product.providers';
-import { usersProviders } from '../users/users.providers';
+import { productProviders } from '../product';
+import { usersProviders } from '../users';
+import { DatabaseModule } from '../../database';
 
 @Module({
   imports: [DatabaseModule],

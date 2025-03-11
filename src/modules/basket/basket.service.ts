@@ -1,17 +1,18 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { Repository, DeleteResult } from 'typeorm';
-import { MODELS } from '../../constants';
-import { BasketEntity } from '../../entity/basket.entity';
-import { ProductEntity } from '../../entity/product.entity';
-import { UsersEntity } from '../../entity/users.entity';
 import {
   AddToBasketDto,
   PaginationBasketParams,
   UpdateBasketDto,
 } from './dto/basket.dto';
-import { ParamIdDto, SingleResponse } from '../../utils/dto/dto';
-import { getPaginationResponse } from '../../utils/pagination.builder';
-import { PaginationResponse } from '../../utils/pagination.response';
+import { BasketEntity, ProductEntity, UsersEntity } from '../../entity';
+import {
+  getPaginationResponse,
+  PaginationResponse,
+  ParamIdDto,
+  SingleResponse,
+} from '../../utils';
+import { MODELS } from '../../constants';
 
 @Injectable()
 export class BasketsService {

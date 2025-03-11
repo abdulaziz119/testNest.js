@@ -10,7 +10,7 @@ import {
   Length,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { Gender, UserLanguage } from '../../../entity/users.entity';
+import { Gender, UserLanguage } from '../../../entity';
 
 export class CreateUserDto {
   @ApiProperty({ example: 'test' })
@@ -92,23 +92,5 @@ export class AuthOtpDto {
   @ApiProperty({ example: 'test@gmail.com' })
   @IsEmail()
   @IsNotEmpty()
-  email: string;
-}
-
-export class UserResponseDto {
-  id: number;
-
-  firstName: string;
-
-  lastName: string;
-
-  gender: Gender;
-
-  birthday: string;
-
-  password: string;
-
-  language: UserLanguage;
-
   email: string;
 }

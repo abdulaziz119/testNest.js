@@ -1,6 +1,6 @@
-import { OrderStatus } from '../../../entity/order.entity';
 import { IsEnum, IsNumber, IsOptional } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { OrderStatus } from '../../../entity';
 
 export class CreateOrderDto {
   userId: number;

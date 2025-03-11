@@ -6,23 +6,18 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { Repository } from 'typeorm';
-import { MODELS } from '../../constants';
-import {
-  PaginationParams,
-  ParamIdDto,
-  SingleResponse,
-} from '../../utils/dto/dto';
 import * as bcrypt from 'bcryptjs';
 import { DeleteResult } from 'typeorm';
-import { UsersEntity } from '../../entity/users.entity';
+import { AuthOtpDto, CreateUserDto, UpdateUserDto } from './dto/users.dto';
+import { UsersEntity } from '../../entity';
 import {
-  AuthOtpDto,
-  CreateUserDto,
-  UpdateUserDto,
-  UserResponseDto,
-} from './dto/users.dto';
-import { PaginationResponse } from '../../utils/pagination.response';
-import { getPaginationResponse } from '../../utils/pagination.builder';
+  getPaginationResponse,
+  PaginationParams,
+  PaginationResponse,
+  ParamIdDto,
+  SingleResponse,
+} from '../../utils';
+import { MODELS } from '../../constants';
 
 @Injectable()
 export class UsersService {

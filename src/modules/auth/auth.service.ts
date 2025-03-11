@@ -1,13 +1,11 @@
 import { Injectable, Inject, HttpException, HttpStatus } from '@nestjs/common';
 import { Repository } from 'typeorm';
-import { SingleResponse } from '../../utils/dto/dto';
-import { UsersEntity } from '../../entity/users.entity';
-import { MODELS } from '../../constants';
-import { OtpEntity } from '../../entity/otp.entity';
-import { AuthorizationService } from '../../services/authorization.service';
-import { MailService } from '../../services/mail.service';
 import * as bcrypt from 'bcryptjs';
 import { AuthLoginDto, AuthRegisterDto, AuthVerifyDto } from './auth.dto';
+import { OtpEntity, UsersEntity } from '../../entity';
+import { SingleResponse } from '../../utils';
+import { AuthorizationService, MailService } from '../../services';
+import { MODELS } from '../../constants';
 
 @Injectable()
 export class AuthService {

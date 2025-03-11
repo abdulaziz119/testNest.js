@@ -1,5 +1,5 @@
 import * as nodemailer from 'nodemailer';
-import { SMTP_PASS, SMTP_USER } from '../utils/env';
+import { SMTP_PASS, SMTP_USER } from '../utils';
 
 export class MailService {
   private transporter;

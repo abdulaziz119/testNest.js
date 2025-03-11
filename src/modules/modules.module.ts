@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
-import { DatabaseModule } from '../database/database.module';
-import { AuthModule } from './auth/auth.module';
-import { UsersModule } from './users/users.module';
-import { ProductModule } from './product/product.module';
-import { CategoryModule } from './category/category.module';
-import { BasketModule } from './basket/basket.module';
-import { OrderModule } from './order/order.module';
+import { AuthModule } from './auth';
+import { DatabaseModule } from '../database';
+import { UsersModule } from './users';
+import { OrderModule } from './order';
+import { ProductModule } from './product';
+import { CategoryModule } from './category';
+import { BasketModule } from './basket';
 
 @Module({
   imports: [

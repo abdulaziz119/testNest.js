@@ -1,5 +1,5 @@
 import { Column, Entity, Unique, Index } from 'typeorm';
-import { DB_SCHEMA } from '../utils/env';
+import { DB_SCHEMA } from '../utils';
 import { BaseEntity } from './base.entity';
 
 @Entity({ schema: DB_SCHEMA, name: 'otps', synchronize: true })

@@ -1,6 +1,6 @@
 import { DataSource } from 'typeorm';
+import { OrderEntity } from '../../entity';
 import { MODELS, PAY_NET_CONNECT_SOURCE } from '../../constants';
-import { OrderEntity } from '../../entity/order.entity';
 
 export const orderProviders = [
   {

@@ -6,19 +6,18 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { Repository, DeleteResult } from 'typeorm';
-import { ProductEntity } from '../../entity/product.entity';
 import { CreateProductDto, UpdateProductDto } from './dto/product.dto';
-import { CategoryEntity } from '../../entity/category.entity';
-import { MODELS } from '../../constants';
-import {
-  PaginationParams,
-  ParamIdDto,
-  SingleResponse,
-} from '../../utils/dto/dto';
-import { getPaginationResponse } from '../../utils/pagination.builder';
-import { PaginationResponse } from '../../utils/pagination.response';
 import { Cache } from 'cache-manager';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { CategoryEntity, ProductEntity } from '../../entity';
+import {
+  getPaginationResponse,
+  PaginationParams,
+  PaginationResponse,
+  ParamIdDto,
+  SingleResponse,
+} from '../../utils';
+import { MODELS } from '../../constants';
 
 @Injectable()
 export class ProductsService {

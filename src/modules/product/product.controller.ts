@@ -1,16 +1,16 @@
 import { Body, Controller, HttpCode, Post } from '@nestjs/common';
-import {
-  PaginationParams,
-  ParamIdDto,
-  SingleResponse,
-} from '../../utils/dto/dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { DeleteResult } from 'typeorm';
-import { PaginationResponse } from '../../utils/pagination.response';
 import { ProductsService } from './product.service';
 import { CreateProductDto, UpdateProductDto } from './dto/product.dto';
-import { ProductEntity } from '../../entity/product.entity';
-import { Auth } from '../auth/decorators/auth.decorator';
+import {
+  PaginationParams,
+  PaginationResponse,
+  ParamIdDto,
+  SingleResponse,
+} from '../../utils';
+import { ProductEntity } from '../../entity';
+import { Auth } from '../auth/decorators';
 
 @ApiBearerAuth()
 @ApiTags('Product')

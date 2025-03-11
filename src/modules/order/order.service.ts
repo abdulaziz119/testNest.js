@@ -1,22 +1,25 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { Repository } from 'typeorm';
-import { MODELS } from '../../constants';
-import { OrderEntity, OrderStatus } from '../../entity/order.entity';
-import { BasketEntity } from '../../entity/basket.entity';
-import { ProductEntity } from '../../entity/product.entity';
-import { UsersEntity } from '../../entity/users.entity';
+import { CreateOrderDto, OrderResponseDto } from './dto/order.dto';
+import { InjectQueue } from '@nestjs/bull';
+import { Queue } from 'bull';
 import {
+  BasketEntity,
+  OrderEntity,
+  OrderStatus,
+  ProductEntity,
+  UsersEntity,
+} from '../../entity';
+import { UsersService } from '../users';
+import {
+  getPaginationResponse,
   PaginationParams,
+  PaginationResponse,
   ParamIdDto,
   ParamUserIdDto,
   SingleResponse,
-} from '../../utils/dto/dto';
-import { getPaginationResponse } from '../../utils/pagination.builder';
-import { PaginationResponse } from '../../utils/pagination.response';
-import { CreateOrderDto, OrderResponseDto } from './dto/order.dto';
-import { UsersService } from '../users/users.service';
-import { InjectQueue } from '@nestjs/bull';
-import { Queue } from 'bull';
+} from '../../utils';
+import { MODELS } from '../../constants';
 
 @Injectable()
 export class OrdersService {

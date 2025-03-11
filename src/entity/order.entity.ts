@@ -1,5 +1,5 @@
 import { Column, Entity, ManyToOne } from 'typeorm';
-import { DB_SCHEMA } from '../utils/env';
+import { DB_SCHEMA } from '../utils';
 import { BaseEntity } from './base.entity';
 import { UsersEntity } from './users.entity';
 import { ProductEntity } from './product.entity';

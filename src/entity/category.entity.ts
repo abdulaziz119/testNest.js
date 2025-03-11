@@ -1,7 +1,7 @@
 import { Column, Entity, ManyToOne, OneToMany, Unique } from 'typeorm';
-import { DB_SCHEMA } from '../utils/env';
 import { BaseEntity } from './base.entity';
 import { ProductEntity } from './product.entity';
+import { DB_SCHEMA } from '../utils';
 
 @Entity({ schema: DB_SCHEMA, name: 'categories', synchronize: true })
 @Unique(['name'])

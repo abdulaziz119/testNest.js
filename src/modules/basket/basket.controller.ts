@@ -1,17 +1,15 @@
 import { Body, Controller, HttpCode, Post } from '@nestjs/common';
 import { DeleteResult } from 'typeorm';
-import { ParamIdDto, SingleResponse } from '../../utils/dto/dto';
 import { BasketsService } from './basket.service';
-import { BasketEntity } from '../../entity/basket.entity';
+import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
+import { PaginationResponse, ParamIdDto, SingleResponse } from '../../utils';
+import { BasketEntity } from '../../entity';
 import {
   AddToBasketDto,
   PaginationBasketParams,
   UpdateBasketDto,
 } from './dto/basket.dto';
-import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
-import { PaginationResponse } from '../../utils/pagination.response';
-import { Auth } from '../auth/decorators/auth.decorator';
-import { User } from '../auth/decorators/user.decorator';
+import { Auth, User } from '../auth/decorators';
 
 @ApiBearerAuth()
 @ApiTags('Basket')

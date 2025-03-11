@@ -1,13 +1,13 @@
 import { Module } from '@nestjs/common';
-import { DatabaseModule } from '../../database/database.module';
 import { ProductController } from './product.controller';
 import { productProviders } from './product.providers';
 import { ProductsService } from './product.service';
-import { categoryProviders } from '../category/category.providers';
 import { CacheModule } from '@nestjs/cache-manager';
 import * as redisStore from 'cache-manager-redis-store';
+import { REDIS_HOST, REDIS_PORT } from '../../utils';
+import { DatabaseModule } from '../../database';
+import { categoryProviders } from '../category';
 import { CACHE_TTL } from '../../constants';
-import { REDIS_HOST, REDIS_PORT } from '../../utils/env';
 
 @Module({
   imports: [

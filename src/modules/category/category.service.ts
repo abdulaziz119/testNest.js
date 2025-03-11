@@ -6,16 +6,16 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { Repository, DeleteResult } from 'typeorm';
-import { CategoryEntity } from '../../entity/category.entity';
 import { CreateCategoryDto, UpdateCategoryDto } from './dto/categories.dto';
-import { MODELS } from '../../constants';
 import {
+  getPaginationResponse,
   PaginationParams,
+  PaginationResponse,
   ParamIdDto,
   SingleResponse,
-} from '../../utils/dto/dto';
-import { PaginationResponse } from '../../utils/pagination.response';
-import { getPaginationResponse } from '../../utils/pagination.builder';
+} from '../../utils';
+import { CategoryEntity } from '../../entity';
+import { MODELS } from '../../constants';
 
 @Injectable()
 export class CategoryService {
